@@ -6,10 +6,31 @@
 #define N 3
 
 /* スワップ計算 */
-void swap(double x, double y) {
-    double temp =  x;
-    x = y;
-    y = temp;
+void swap(double *x, double *y) {
+    double temp =  *x;
+    *x = *y;
+    *y = temp;
+}
+
+/* ピポッド処理 */
+void pipoddo(int k, double a[N][N], double b[N]) {
+    int max = k, i, j;
+
+    for(i = k + 1; i < N; i++) {
+        if(fabs(a[i][k]) > fabs(a[max][k]))
+            max = i;
+    }
+
+    /* 例外処理(対角成分が小さな値になったとき) */
+    if(fabs(a[max][k]) < 1.0e-7)
+        exit(0);
+
+    /* 行の入れ替え */
+    if(max != k) {
+        for(j = 0; j < N; j++)
+            swap(&a[k][j], &a[max][j]);
+        swap(&b[k], &b[max]);
+    }
 }
 
 /* 掃き出し法計算ルーチン */
@@ -18,28 +39,7 @@ void sweep(double a[N][N], double x[N], double b[N]) {
     double akk, aik, copy;
 
     for(k = 0; k < N; k++) {
-        max = k;
-
-        for(i = k + 1; i < N; i++) {
-            if(fabs(a[i][k]) > fabs(a[max][k]))
-                max = i;
-        }
-
-        /* 例外処理(対角成分が小さな値になったとき) */
-        if(fabs(a[max][k]) < 1.0e-7)
-            exit(0);
-
-        /* 行の入れ替え */
-        if(max != k) {
-            for(j = 0; j < N; j++) {
-                copy = a[k][j];
-                a[k][j] = a[max][j];
-                a[max][j] = copy;
-            }
-            copy = b[k];
-            b[k] = b[max];
-            b[max] = copy;
-        }
+        pipoddo(k, a, b); //ピポッド処理
 
         /* 掃き出し */
         akk = a[k][k];
@@ -69,28 +69,7 @@ void gauss(double a[N][N], double x[N], double b[N]) {
 
     /* ピポッド選択 */
     for(k = 0; k < N - 1; k++) {
-        max = k;
-
-        for(i = k + 1; i < N; i++) {
-            if(fabs(a[i][k]) > fabs(a[max][k]))
-                max = i;
-        }
-
-        /* 例外処理(対角成分が小さな値になったとき) */
-        if(fabs(a[max][k]) < 1.0e-7)
-            exit(0);
-        
-        /* 行の入れ替え */
-        if(max != k) {
-            for(j = 0; j < N; j++) {
-                copy = a[k][j];
-                a[k][j] = a[max][j];
-                a[max][j] = copy;
-            }
-            copy = b[k];
-            b[k] = b[max];
-            b[max] = copy;
-        }
+        pipoddo(k, a, b); //ピポッド処理
 
         /* 前進消去 */
         akk = a[k][k];
