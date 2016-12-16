@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <math.h>
 
+#define NO 37 //学籍番号
 #define NUM 3 //行列のサイズ
 #define EP 0.001 //終了条件
 
 const double array[NUM][NUM] = {
-    {2, -1, 0},
+    {NO, -1, 0},
     {-1, 2, -1},
     {0, -1, 2}
 };
