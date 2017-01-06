@@ -51,6 +51,31 @@ double newton2(double x) {
     return  ans;
 }
 
+/* ラグランジュ補間 */
+double lagrange(double x) {
+    double a[3], b[3], n, d, ans = 0;
+    int i, j;
+
+    a[0] = ((int)(x * 10)) / 10.0;
+    for(i = 1; i < 3; i++)
+        a[i] = a[i - 1] + 0.1;
+    for(i = 0; i < 3; i++)
+        b[i] = function(a[i]);
+    
+    for(i = 0; i < 3; i++) {
+        n = d = 1;
+        for(j = 0; j < 3; j++) {
+            if(i != j) {
+                n *= x - a[j];
+                d *= a[i] - a[j];
+            }
+        }
+        ans += n / d * b[i];
+    }
+
+    return ans;
+}
+
 int main(void) {
     const double ans = function(TARGET);
     double y;
@@ -66,6 +91,10 @@ int main(void) {
     printf("[Newton polynomial(2)]\n");
     y = newton2(TARGET);
     printf("|%lf - %lf| = %lf\n\n", ans, y, fabs(ans - y));
+
+    printf("[Lagrange interpolation]\n");
+    y = lagrange(TARGET);
+    printf("|%lf - %lf| = %lf\n", ans, y, fabs(ans - y));
 
     return 0;
 }
