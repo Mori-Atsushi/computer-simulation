@@ -34,6 +34,30 @@ double intermediateDifference2(int target, double f[5]) {
     return f[target + 1] - 2 * f[target] + f[target - 1];
 }
 
+//ラグランジュ補間 1階微分係数
+double lagrangian(int target, double f[5]) {
+    int i, j, k;
+    double L, N, D, l;
+
+    for(i = 0, L = 0; i < 5; i++) {
+        for(j = 0, N = 0, D = 1; j < 5; j++) {
+            if(i != j) {
+                D *= i - j;
+                l = 1;
+                for(k = 0; k < 5; k++) {
+                    if(k != i && k != j)
+                        l *= target - k;
+                }
+                N += l;
+            }
+        }
+        printf("%lf\n", N / D * f[i]);
+        L += N / D * f[i];
+    }
+
+    return L;
+}
+
 int main(void) {
     int i;
     double f[5];
@@ -55,6 +79,10 @@ int main(void) {
     printf("[intermediate difference]\n");
     printf("first   :%lf\n", intermediateDifference1(TARGET, f));
     printf("second  :%lf\n", intermediateDifference2(TARGET, f));
+
+    //ラグランジュ補間
+    printf("[lagrangian]\n");
+    printf("first   :%lf\n", lagrangian(TARGET, f));
 
     return 0;
 }
